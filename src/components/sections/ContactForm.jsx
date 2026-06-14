@@ -41,10 +41,17 @@ export function ContactForm() {
           const res = await fetch(FORMSPREE_ENDPOINT, {
             method: 'POST',
             headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...form, _subject: `Website enquiry from ${form.name}` }),
+            body: JSON.stringify({
+              ...form,
+              _subject: `Website enquiry from ${form.name}`,
+              _cc: form.email, // auto-copy the person who filled the form
+            }),
           })
           if (!res.ok) throw new Error('network')
-          setStatus({ state: 'success', msg: "Thanks — your enquiry is on its way. We'll reply by email." })
+          setStatus({
+            state: 'success',
+            msg: "Thanks — your enquiry is on its way, and a copy has been sent to your email.",
+          })
           setForm(EMPTY)
         } catch {
           setStatus({
@@ -55,13 +62,18 @@ export function ContactForm() {
         return
       }
 
-      // Path B — no endpoint set: open the visitor's mail client, pre-addressed.
+      // Path B — no endpoint set: open the visitor's mail client, pre-addressed,
+      // CC'ing their own address so they keep a copy.
       const subject = encodeURIComponent(`Website enquiry from ${form.name}`)
       const body = encodeURIComponent(
         `Name: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company || '-'}\n\n${form.message}`,
       )
-      window.location.href = `mailto:${COMPANY.email}?subject=${subject}&body=${body}`
-      setStatus({ state: 'success', msg: 'Your email app is opening with the message ready — just hit send.' })
+      const cc = encodeURIComponent(form.email)
+      window.location.href = `mailto:${COMPANY.email}?cc=${cc}&subject=${subject}&body=${body}`
+      setStatus({
+        state: 'success',
+        msg: 'Your email app is opening — it CCs your address so you keep a copy. Just hit send.',
+      })
     },
     [form],
   )
@@ -115,7 +127,9 @@ export function ContactForm() {
         {status.state === 'error' && <p className="text-sm text-red-500">{status.msg}</p>}
       </div>
 
-      <p className="mt-1 font-mono-spec text-[10px] text-slate-400">Goes straight to {COMPANY.email}</p>
+      <p className="mt-1 font-mono-spec text-[10px] text-slate-400">
+        Goes to {COMPANY.email} — with a copy to your address.
+      </p>
     </form>
   )
 }
