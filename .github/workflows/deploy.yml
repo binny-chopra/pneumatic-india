@@ -1,0 +1,67 @@
+# Builds the Vite app and deploys it to GitHub Pages on every push to the
+# default branch. In the repo: Settings → Pages → Build and deployment →
+# Source = "GitHub Actions" (one-time).
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ['main', 'master'] # default branch (keep whichever yours is)
+  workflow_dispatch: # lets you run it manually from the Actions tab
+
+# Permissions the GITHUB_TOKEN needs to publish to Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Derives base path from the repo name (e.g. /pneumatic-india/) so you
+      # never have to hardcode it — works for any repo.
+      - name: Set base path from repo name
+        run: echo "VITE_BASE=/${GITHUB_REPOSITORY#*/}/" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: npm run build
+        env:
+          # Optional: add a repo secret VITE_FORMSPREE_ENDPOINT to receive
+          # contact-form emails. If unset, the form falls back to mailto.
+          VITE_FORMSPREE_ENDPOINT: ${{ secrets.VITE_FORMSPREE_ENDPOINT }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
