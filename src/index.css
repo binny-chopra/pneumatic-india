@@ -1,0 +1,151 @@
+@import 'tailwindcss';
+
+/* Enable class-based dark mode (toggled on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---- Design tokens: steel blue + industrial safety yellow ---- */
+@theme {
+  --color-brand-navy: #0a1a33;
+  --color-brand-ink: #0e2c5e;
+  --color-brand-blue: #1b4da8;
+  --color-brand-azure: #3b82f6;
+  --color-brand-yellow: #ffc400;
+  --color-brand-soft: #ffd54a;
+
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono-spec: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ---- Base ---- */
+:root {
+  color-scheme: light dark;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  background: #f4f7fb;
+  color: #0a1a33;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.dark body {
+  background: #070e1c;
+  color: #f1f5f9;
+}
+
+/* ---- Blueprint grid (hero / certifications backdrop) ---- */
+.blueprint {
+  background-image:
+    linear-gradient(to right, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.dark .blueprint {
+  background-image:
+    linear-gradient(to right, rgba(96, 165, 250, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(96, 165, 250, 0.1) 1px, transparent 1px);
+}
+
+/* ---- Scroll reveal ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Pressure-gauge needle sweep (hero signature) ---- */
+@keyframes needle-sweep {
+  0% { transform: rotate(-90deg); }
+  60% { transform: rotate(58deg); }
+  78% { transform: rotate(46deg); }
+  100% { transform: rotate(52deg); }
+}
+.needle {
+  transform-origin: 100px 100px;
+  animation: needle-sweep 2.1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.25s both;
+}
+
+@keyframes ping-ring {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+.ping-ring {
+  animation: ping-ring 2.6s ease-out infinite;
+}
+
+/* ---- Standards marquee ---- */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 26s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ---- Focus + scrollbar ---- */
+:focus-visible {
+  outline: 3px solid var(--color-brand-yellow);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-blue);
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-brand-azure);
+  background-clip: content-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .needle,
+  .ping-ring,
+  .marquee-track {
+    animation: none !important;
+  }
+  .needle {
+    transform: rotate(52deg);
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ---- Hydraulic power-flow figure (hero) ---- */
+@keyframes hp-flow { to { stroke-dashoffset: -32; } }
+@keyframes hp-spin { to { transform: rotate(360deg); } }
+@keyframes hp-piston {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(17px); }
+}
+.hp-flow { animation: hp-flow 1.1s linear infinite; }
+.hp-spin { transform-box: fill-box; transform-origin: center; animation: hp-spin 4s linear infinite; }
+.hp-piston { animation: hp-piston 2.8s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-flow, .hp-spin, .hp-piston { animation: none !important; }
+}
