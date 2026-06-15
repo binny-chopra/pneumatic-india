@@ -119,7 +119,7 @@ export function ContactForm() {
         </button>
 
         <p className="mt-3 font-mono-spec text-[10px] text-slate-400">
-          Sent to {COMPANY.email} — with a copy to your address. No app opens.
+          Sent to {COMPANY.email} — with a copy to your address.
         </p>
       </form>
 
