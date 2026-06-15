@@ -27,28 +27,19 @@ npm run lint     # run ESLint
 
 Requires Node.js 18+.
 
-## Contact form email (EmailJS)
+## Contact form email (FormSubmit)
 
-The contact form sends each enquiry to the business **and** a copy to the
-person who filled it in — entirely from the browser, no backend, no mailbox.
+The contact form sends each enquiry to the business **and** a copy to the sender
+— with no backend, no account and no keys. It uses
+[FormSubmit](https://formsubmit.co): the app simply POSTs to
+`https://formsubmit.co/ajax/<business-email>`.
 
-It uses [EmailJS](https://www.emailjs.com) (free tier). Create a service +
-template + public key, then set three variables in `.env` (copy `.env.example`):
+The only setup is a **one-time activation**: the first time the form is
+submitted, FormSubmit emails the business inbox an activation link — click it
+once and delivery is enabled from then on.
 
-```
-VITE_EMAILJS_SERVICE_ID=...
-VITE_EMAILJS_TEMPLATE_ID=...
-VITE_EMAILJS_PUBLIC_KEY=...
-```
-
-In the EmailJS template set **To Email** to `{{to_email}}` (the app passes the
-business address and the sender's address together) and **Reply To** to
-`{{reply_to}}`. The body can use `{{from_name}}`, `{{user_email}}`,
-`{{company}}` and `{{message}}`. Add your deployed domain under EmailJS →
-Account → Security → Allowed origins.
-
-If the keys are absent (e.g. local preview), the form still validates and
-clears, but shows a "preview only" toast instead of sending.
+To change the recipient, edit `email` in `src/data/company.js`. Nothing else to
+configure.
 
 ## Deploying
 

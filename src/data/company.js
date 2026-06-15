@@ -20,15 +20,8 @@ export const COMPANY = {
 export const phoneHref = `tel:${COMPANY.phone.replace(/[^+\d]/g, '')}`
 export const mailHref = `mailto:${COMPANY.email}`
 
-// Client-side email delivery via EmailJS (no backend). When all three values are
-// present the contact form sends the enquiry to the business AND a copy to the
-// sender, entirely in the browser. Set these in .env (see .env.example).
-export const EMAILJS = {
-  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || '',
-  templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '',
-  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '',
-}
-
-export const emailjsConfigured = Boolean(
-  EMAILJS.serviceId && EMAILJS.templateId && EMAILJS.publicKey,
-)
+// Contact form delivery via FormSubmit (https://formsubmit.co) — no account,
+// no keys, no backend. It posts the enquiry to the business email below and
+// CCs the sender. The first submission triggers a one-time activation email to
+// the business inbox (click the link once to enable delivery).
+export const FORM_ENDPOINT = `https://formsubmit.co/ajax/${COMPANY.email}`

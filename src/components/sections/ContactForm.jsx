@@ -1,8 +1,7 @@
 import { useCallback, useState } from 'react'
-import emailjs from '@emailjs/browser'
 import { Mail } from '../icons'
 import { Toast } from '../ui/Toast'
-import { COMPANY, EMAILJS, emailjsConfigured } from '../../data/company'
+import { COMPANY, FORM_ENDPOINT } from '../../data/company'
 
 const inputCls =
   'w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] px-4 py-3 text-sm outline-none focus:border-brand-blue dark:focus:border-brand-azure transition disabled:opacity-60'
@@ -34,37 +33,30 @@ export function ContactForm() {
       e.preventDefault()
       if (sending) return
 
-      // 1) Validation — must pass before anything is sent.
+      // Validation first — nothing is sent until this passes.
       if (!form.name.trim() || !isEmail(form.email) || !form.message.trim()) {
         notify('error', 'Please add your name, a valid email and a message.')
         return
       }
 
       setSending(true)
-
-      // Parameters consumed by the EmailJS template (see .env.example for setup).
-      const params = {
-        to_email: `${COMPANY.email}, ${form.email}`, // business + sender
-        from_name: form.name,
-        reply_to: form.email,
-        user_email: form.email,
-        company: form.company.trim() || '—',
-        message: form.message.trim(),
-      }
-
-      // Not configured yet (e.g. this preview) — demonstrate the flow honestly.
-      if (!emailjsConfigured) {
-        await new Promise((r) => setTimeout(r, 600))
-        setForm(EMPTY)
-        setSending(false)
-        notify('info', 'Preview only — add your EmailJS keys to actually send. Fields cleared.')
-        return
-      }
-
       try {
-        await emailjs.send(EMAILJS.serviceId, EMAILJS.templateId, params, {
-          publicKey: EMAILJS.publicKey,
+        const res = await fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email, // FormSubmit uses this as reply-to
+            company: form.company.trim() || '—',
+            message: form.message.trim(),
+            _subject: `New enquiry from ${form.name}`,
+            _cc: form.email, // copy to the sender
+            _template: 'table',
+            _captcha: 'false',
+          }),
         })
+        if (!res.ok) throw new Error('request failed')
+
         setForm(EMPTY)
         notify('success', 'Thanks! Your enquiry was sent — a copy is on its way to your inbox too.')
       } catch {
@@ -119,7 +111,7 @@ export function ContactForm() {
         </button>
 
         <p className="mt-3 font-mono-spec text-[10px] text-slate-400">
-          Sent to {COMPANY.email} — with a copy to your address.
+          Sent to {COMPANY.email} — with a copy to your address. No app opens.
         </p>
       </form>
 
