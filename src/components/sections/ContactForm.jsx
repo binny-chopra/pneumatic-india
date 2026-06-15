@@ -58,7 +58,7 @@ export function ContactForm() {
         if (!res.ok) throw new Error('request failed')
 
         setForm(EMPTY)
-        notify('success', 'Thanks! Your enquiry was sent — a copy is on its way to your inbox too.')
+        notify('success', `Sent to ${COMPANY.email} — with a copy to your address.`)
       } catch {
         notify('error', `Couldn't send right now. Please email us at ${COMPANY.email}.`)
       } finally {
@@ -109,10 +109,6 @@ export function ContactForm() {
         >
           <Mail className="w-5 h-5" /> {sending ? 'Sending…' : 'Send'}
         </button>
-
-        <p className="mt-3 font-mono-spec text-[10px] text-slate-400">
-          Sent to {COMPANY.email} — with a copy to your address. No app opens.
-        </p>
       </form>
 
       <Toast toast={toast} onClose={() => setToast(null)} />
