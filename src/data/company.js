@@ -20,7 +20,15 @@ export const COMPANY = {
 export const phoneHref = `tel:${COMPANY.phone.replace(/[^+\d]/g, '')}`
 export const mailHref = `mailto:${COMPANY.email}`
 
-// Optional Formspree endpoint (set VITE_FORMSPREE_ENDPOINT in .env).
-// When present, the contact form POSTs here and delivers to the inbox.
-// When empty, the form falls back to opening the visitor's mail client.
-export const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT || ''
+// Client-side email delivery via EmailJS (no backend). When all three values are
+// present the contact form sends the enquiry to the business AND a copy to the
+// sender, entirely in the browser. Set these in .env (see .env.example).
+export const EMAILJS = {
+  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || '',
+  templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '',
+  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '',
+}
+
+export const emailjsConfigured = Boolean(
+  EMAILJS.serviceId && EMAILJS.templateId && EMAILJS.publicKey,
+)

@@ -72,3 +72,15 @@ export const Copy = (p) => (
     <path d="M5 15V5a2 2 0 0 1 2-2h10" />
   </Stroke>
 )
+export const Info = (p) => (
+  <Stroke {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 16v-4M12 8h.01" />
+  </Stroke>
+)
+export const AlertTriangle = (p) => (
+  <Stroke {...p}>
+    <path d="M10.3 3.6 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z" />
+    <path d="M12 9v4M12 17h.01" />
+  </Stroke>
+)

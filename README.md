@@ -27,20 +27,28 @@ npm run lint     # run ESLint
 
 Requires Node.js 18+.
 
-## Receiving contact-form emails
+## Contact form email (EmailJS)
 
-The form works two ways, with **no backend required**:
+The contact form sends each enquiry to the business **and** a copy to the
+person who filled it in — entirely from the browser, no backend, no mailbox.
 
-1. **Out of the box** — clicking *Send email* opens the visitor's mail app with a message
-   pre-addressed to `pneumaticindialdh@gmail.com`.
-2. **Background delivery (recommended)** — create a free form at
-   [formspree.io](https://formspree.io), then copy `.env.example` to `.env` and set:
+It uses [EmailJS](https://www.emailjs.com) (free tier). Create a service +
+template + public key, then set three variables in `.env` (copy `.env.example`):
 
-   ```
-   VITE_FORMSPREE_ENDPOINT=https://formspree.io/f/your-id
-   ```
+```
+VITE_EMAILJS_SERVICE_ID=...
+VITE_EMAILJS_TEMPLATE_ID=...
+VITE_EMAILJS_PUBLIC_KEY=...
+```
 
-   Submissions then POST straight to the inbox.
+In the EmailJS template set **To Email** to `{{to_email}}` (the app passes the
+business address and the sender's address together) and **Reply To** to
+`{{reply_to}}`. The body can use `{{from_name}}`, `{{user_email}}`,
+`{{company}}` and `{{message}}`. Add your deployed domain under EmailJS →
+Account → Security → Allowed origins.
+
+If the keys are absent (e.g. local preview), the form still validates and
+clears, but shows a "preview only" toast instead of sending.
 
 ## Deploying
 
